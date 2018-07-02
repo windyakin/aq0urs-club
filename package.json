@@ -1,0 +1,11 @@
+{
+  "name": "aq0urs-club",
+  "version": "1.0.0",
+  "description": "aq0urs club site update notification",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "windyakin",
+  "license": "MIT"
+}
