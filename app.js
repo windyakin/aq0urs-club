@@ -24,18 +24,25 @@ const COOKIES_PATH = `${__dirname}/cookie/data.json`;
 
   await page.goto(WEBSITE_URL, { waituntil: 'networkidle0' });
 
-  if (!(await page.$('.account'))) {
-    await page.type('#loginId', process.env.AQ0URS_CLUB_ID);
-    await page.type('#loginPass', process.env.AQ0URS_CLUB_PASS);
-    // NOTE: Don't use "submit", call onClick event of login button
-    await await Promise.all([
-      page.evaluate(() => {
-        /* eslint-disable */
-        ajaxLogin();
-        /* eslint-enable */
-      }),
-      page.waitForNavigation({ waituntil: 'networkidle0' }),
-    ]);
+  try {
+    if (!(await page.$('.account'))) {
+      await page.type('#loginId', process.env.AQ0URS_CLUB_ID);
+      await page.type('#loginPass', process.env.AQ0URS_CLUB_PASS);
+      // NOTE: Don't use "submit", call onClick event of login button
+      await Promise.all([
+        page.evaluate(() => {
+          /* eslint-disable */
+          ajaxLogin();
+          /* eslint-enable */
+        }),
+        page.waitForNavigation({ waituntil: 'networkidle0' }),
+      ]);
+    }
+  } catch (err) {
+    console.error('Failed login', err);
+    await page.close();
+    await browser.close();
+    process.exit(1);
   }
 
   await fs.writeFileAsync(COOKIES_PATH, JSON.stringify(await page.cookies()));
