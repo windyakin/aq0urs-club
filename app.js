@@ -5,17 +5,21 @@ const fs = Promise.promisifyAll(require('fs'));
 require('dotenv').config();
 
 const WEBSITE_URL = Buffer.from('aHR0cHM6Ly9sb3ZlbGl2ZS1hcW91cnNjbHViLmpwLw==', 'base64').toString();
-const COOKIES_PATH = './cookie/data.json';
+const COOKIES_PATH = `${__dirname}/cookie/data.json`;
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
-  if ((await fs.statAsync(COOKIES_PATH)).isFile()) {
-    const cookies = await JSON.parse(await fs.readFileAsync(COOKIES_PATH, 'utf-8'));
-    await Promise.each(cookies, async (cookie) => {
-      await page.setCookie(cookie);
-    });
+  try {
+    if ((await fs.statAsync(COOKIES_PATH)).isFile()) {
+      const cookies = await JSON.parse(await fs.readFileAsync(COOKIES_PATH, 'utf-8'));
+      await Promise.each(cookies, async (cookie) => {
+        await page.setCookie(cookie);
+      });
+    }
+  } catch (err) {
+    console.error('Failed load cookies', err);
   }
 
   await page.goto(WEBSITE_URL, { waituntil: 'networkidle0' });
