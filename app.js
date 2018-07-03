@@ -65,6 +65,53 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshots`;
     console.error('Failed take screenshot', err);
   }
 
+  try {
+    await Promise.all([
+      (await page.$('.news')).click(),
+      page.waitForNavigation({ waituntil: 'networkidle0' }),
+    ]);
+  } catch (err) {
+    console.error('Failed move news page', err);
+  }
+
+  try {
+    const newsItemElements = await (await page.$('.items')).$$('.items-item');
+    await Promise.each(newsItemElements, async (newsItem) => {
+      const newsDateText = (await (await (await newsItem.$('.info-date')).getProperty('innerText')).jsonValue()).trim();
+      const newsCategory = (await (await (await newsItem.$('.info-category')).getProperty('innerText')).jsonValue()).trim();
+      // eslint-disable-next-line no-undef
+      const newsCategoryColor = await newsItem.$eval('.info-category', categoryElement => getComputedStyle(categoryElement).backgroundColor);
+      const newsTitle = (await (await (await newsItem.$('.info-desc')).getProperty('innerText')).jsonValue()).trim();
+      console.log(newsDateText, newsCategory, newsCategoryColor, newsTitle);
+    });
+  } catch (err) {
+    console.error('Failed get news items', err);
+  }
+
+  try {
+    await Promise.all([
+      (await page.$('.blog')).click(),
+      page.waitForNavigation({ waituntil: 'networkidle0' }),
+    ]);
+  } catch (err) {
+    console.error('Failed move news page', err);
+  }
+
+  try {
+    const blogEntries = await (await page.$('.items')).$$('.items-item');
+    await Promise.each(blogEntries, async (blogEntry) => {
+      const entryDateText = (await (await (await blogEntry.$('.info-date')).getProperty('innerText')).jsonValue()).trim();
+      const entryAuthor = (await (await (await blogEntry.$('.items-info-detail > a')).getProperty('innerText')).jsonValue()).trim();
+      // eslint-disable-next-line no-undef
+      const entryAuthorColor = await blogEntry.$eval('.items-info-detail > a', authorElement => getComputedStyle(authorElement).backgroundColor);
+      const entryTitle = (await (await (await blogEntry.$('h2')).getProperty('innerText')).jsonValue()).trim();
+      const entrySummary = (await (await (await blogEntry.$('.items-summary')).getProperty('innerText')).jsonValue()).trim();
+      console.log(entryDateText, entryAuthor, entryAuthorColor, entryTitle, entrySummary);
+    });
+  } catch (err) {
+    console.error('Failed get blog entries', err);
+  }
+
   await fs.writeFileAsync(COOKIES_PATH, JSON.stringify(await page.cookies()));
   await page.close();
   await browser.close();
