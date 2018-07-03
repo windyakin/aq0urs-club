@@ -3,3 +3,5 @@ node_modules/
 .env
 cookie/*
 !cookie/.keep
+screenshot/*
+!screenshot/.keep
