@@ -108,7 +108,12 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshots`;
     console.error('Failed get blog entries', err);
   }
 
-  await fs.writeFileAsync(COOKIES_PATH, JSON.stringify(await page.cookies()));
+  try {
+    await fs.writeFileAsync(COOKIES_PATH, JSON.stringify(await page.cookies()));
+  } catch (err) {
+    console.error('Failed save cookies', err);
+  }
+
   await page.close();
   await browser.close();
 })();
