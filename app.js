@@ -44,11 +44,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshots`;
       await page.type('#loginPass', process.env.AQ0URS_CLUB_PASS);
       // NOTE: Don't use "submit", call onClick event of login button
       await Promise.all([
-        page.evaluate(() => {
-          /* eslint-disable */
-          ajaxLogin();
-          /* eslint-enable */
-        }),
+        page.evaluate(() => window.ajaxLogin()),
         page.waitForNavigation({ waituntil: 'networkidle0' }),
       ]);
     }
@@ -80,8 +76,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshots`;
       const newsUrl = await newsItem.$('a') ? await newsItem.$eval('a', linkElement => linkElement.href) : null;
       const newsDateText = (await (await (await newsItem.$('.info-date')).getProperty('innerText')).jsonValue()).trim();
       const newsCategory = (await (await (await newsItem.$('.info-category')).getProperty('innerText')).jsonValue()).trim();
-      // eslint-disable-next-line no-undef
-      const newsCategoryColor = await newsItem.$eval('.info-category', categoryElement => getComputedStyle(categoryElement).backgroundColor);
+      const newsCategoryColor = await newsItem.$eval('.info-category', categoryElement => window.getComputedStyle(categoryElement).backgroundColor);
       const newsTitle = (await (await (await newsItem.$('.info-desc')).getProperty('innerText')).jsonValue()).trim();
       console.log(newsUrl, newsDateText, newsCategory, newsCategoryColor, newsTitle);
     });
@@ -104,8 +99,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshots`;
       const entryUrl = await blogEntry.$eval('h2 > a', linkElement => linkElement.href);
       const entryDateText = (await (await (await blogEntry.$('.info-date')).getProperty('innerText')).jsonValue()).trim();
       const entryAuthor = (await (await (await blogEntry.$('.items-info-detail > a')).getProperty('innerText')).jsonValue()).trim();
-      // eslint-disable-next-line no-undef
-      const entryAuthorColor = await blogEntry.$eval('.items-info-detail > a', authorElement => getComputedStyle(authorElement).backgroundColor);
+      const entryAuthorColor = await blogEntry.$eval('.items-info-detail > a', authorElement => window.getComputedStyle(authorElement).backgroundColor);
       const entryTitle = (await (await (await blogEntry.$('h2')).getProperty('innerText')).jsonValue()).trim();
       const entrySummary = (await (await (await blogEntry.$('.items-summary')).getProperty('innerText')).jsonValue()).trim();
       console.log(entryUrl, entryDateText, entryAuthor, entryAuthorColor, entryTitle, entrySummary);
