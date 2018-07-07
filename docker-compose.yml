@@ -1,0 +1,12 @@
+version: '3'
+
+volumes:
+  minio_data: {}
+
+services:
+  fake:
+    image: nginx
+    volumes:
+      - ./dummy:/usr/share/nginx/html:ro
+    ports:
+      - 8080:80
