@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const WEBSITE_URL = Buffer.from('aHR0cHM6Ly9sb3ZlbGl2ZS1hcW91cnNjbHViLmpwLw==', 'base64').toString();
 const COOKIES_PATH = `${__dirname}/cookie/data.json`;
-const SCREENSHOTS_PATH = `${__dirname}/screenshots`;
+const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
