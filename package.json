@@ -19,6 +19,8 @@
     "dotenv": "^6.0.0",
     "moment": "^2.22.2",
     "puppeteer": "^1.5.0",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2",
     "striptags": "^3.1.1"
   }
 }
