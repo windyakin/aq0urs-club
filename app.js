@@ -15,7 +15,11 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
 const NAVIGATION_WAITING_OPTIONS = { waituntil: 'networkidle0' };
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: false });
+  const options = {};
+  if (process.env.CHROME_EXECUTE_PATH) {
+    options.executablePath = process.env.CHROME_EXECUTE_PATH;
+  }
+  const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(process.env.PUPPETEER_TIMEOUT || 30000);
 
