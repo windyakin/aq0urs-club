@@ -1,0 +1,19 @@
+version: '3'
+
+volumes:
+  cookies: {}
+  screenshots: {}
+
+services:
+  crawler:
+    image: aq0urs-club
+    build: .
+    cap_add:
+      - SYS_ADMIN
+    env_file: .env
+    environment:
+      - TZ=Asia/Tokyo
+      - PUPPETEER_TIMEOUT=90000
+    volumes:
+      - cookies:/usr/src/app/cookie
+      - screenshots:/usr/src/app/screenshot
