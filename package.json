@@ -4,6 +4,7 @@
   "description": "aq0urs club site update notification",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "windyakin",
