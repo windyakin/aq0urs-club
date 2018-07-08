@@ -12,10 +12,12 @@ require('dotenv').config();
 const WEBSITE_URL = Buffer.from('aHR0cHM6Ly9sb3ZlbGl2ZS1hcW91cnNjbHViLmpwLw==', 'base64').toString();
 const COOKIES_PATH = `${__dirname}/cookie/data.json`;
 const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
+const NAVIGATION_WAITING_OPTIONS = { waituntil: 'networkidle0' };
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(process.env.PUPPETEER_TIMEOUT || 30000);
 
   try {
     if ((await fs.statAsync(COOKIES_PATH)).isFile()) {
@@ -40,7 +42,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
     },
   });
 
-  await page.goto(WEBSITE_URL, { waituntil: 'networkidle0' });
+  await page.goto(WEBSITE_URL, NAVIGATION_WAITING_OPTIONS);
 
   try {
     if (!(await page.$('.account'))) {
@@ -49,7 +51,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
       // NOTE: Don't use "submit", call onClick event of login button
       await Promise.all([
         page.evaluate(() => window.ajaxLogin()),
-        page.waitForNavigation({ waituntil: 'networkidle0' }),
+        page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
       ]);
     }
   } catch (err) {
@@ -68,7 +70,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
   try {
     await Promise.all([
       (await page.$('.news')).click(),
-      page.waitForNavigation({ waituntil: 'networkidle0' }),
+      page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
     ]);
   } catch (err) {
     console.error('Failed move news page', err);
@@ -94,7 +96,7 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
   try {
     await Promise.all([
       (await page.$('.blog')).click(),
-      page.waitForNavigation({ waituntil: 'networkidle0' }),
+      page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
     ]);
   } catch (err) {
     console.error('Failed move news page', err);
