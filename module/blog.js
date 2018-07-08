@@ -14,13 +14,6 @@ module.exports = class Entry extends ActiveItem {
   get Summary() { return striptags(this.summary); }
 
   getSlackAttachment() {
-    return {
-      color: this.Color.hexString(),
-      title: this.Title,
-      title_link: this.Url.toString(),
-      text: this.Summary,
-      footer: this.Author,
-      ts: this.Date.unix(),
-    };
+    return Object.assign(super.getSlackAttachment(), { text: this.Summary, footer: this.Author });
   }
 };

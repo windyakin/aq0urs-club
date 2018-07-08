@@ -26,4 +26,13 @@ module.exports = class ActiveItem {
     const now = date || moment();
     return now.subtract(1, 'days').startOf('date') <= this.Date();
   }
+
+  getSlackAttachment() {
+    return {
+      color: this.Color.hexString(),
+      title: this.Title,
+      title_link: (this.Url === null ? null : this.Url.toString()),
+      ts: this.Date.unix(),
+    };
+  }
 };
