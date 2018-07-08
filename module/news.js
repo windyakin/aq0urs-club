@@ -9,12 +9,6 @@ module.exports = class News extends ActiveItem {
   get Category() { return this.category; }
 
   getSlackAttachment() {
-    return {
-      color: this.Color.hexString(),
-      title: this.Title,
-      title_link: this.Url,
-      footer: this.Category,
-      ts: this.Date.unix(),
-    };
+    return Object.assign(super.getSlackAttachment(), { footer: this.Category });
   }
 };
