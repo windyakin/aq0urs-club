@@ -3,6 +3,8 @@ version: '3'
 volumes:
   cookies: {}
   screenshots: {}
+  minio_data: {}
+  minio_config: {}
 
 services:
   crawler:
@@ -17,3 +19,15 @@ services:
     volumes:
       - cookies:/usr/src/app/cookie
       - screenshots:/usr/src/app/screenshot
+  minio:
+    image: minio/minio
+    ports:
+      - 9000:9000
+    env_file: .env
+    volumes:
+      - minio_data:/data
+      - minio_config:/root/.minio
+    entrypoint:
+      - sh
+      - -c
+    command: '"mkdir -p /data/${MINIO_BUCKET_NAME} && /usr/bin/docker-entrypoint.sh server /data"'

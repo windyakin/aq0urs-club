@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 const moment = require('moment');
+const minio = require('minio');
 
 const log4js = require('log4js');
 
@@ -27,6 +28,14 @@ module.exports = async () => {
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(process.env.PUPPETEER_TIMEOUT || 30000);
+
+  const minioClient = new minio.Client({
+    endPoint: process.env.MINIO_ENDPOINT,
+    port: process.env.MINIO_PORT,
+    secure: false,
+    accessKey: process.env.MINIO_ACCESS_KEY,
+    secretKey: process.env.MINIO_SECRET_KEY,
+  });
 
   try {
     logger.debug('Load cookies...');
