@@ -3,6 +3,8 @@ const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
 const moment = require('moment');
 
+const log4js = require('log4js');
+
 const News = require('./module/news');
 const Blog = require('./module/blog');
 const SlackService = require('./module/slack-service');
@@ -13,6 +15,11 @@ const SCREENSHOTS_PATH = `${__dirname}/screenshot`;
 const NAVIGATION_WAITING_OPTIONS = { waituntil: 'networkidle0' };
 
 module.exports = async () => {
+  const logger = log4js.getLogger();
+  logger.level = 'debug';
+
+  logger.info('Start task');
+
   const options = {};
   if (process.env.CHROME_EXECUTE_PATH) {
     options.executablePath = process.env.CHROME_EXECUTE_PATH;
@@ -22,6 +29,7 @@ module.exports = async () => {
   page.setDefaultNavigationTimeout(process.env.PUPPETEER_TIMEOUT || 30000);
 
   try {
+    logger.debug('Load cookies...');
     if ((await fs.statAsync(COOKIES_PATH)).isFile()) {
       const cookies = await JSON.parse(await fs.readFileAsync(COOKIES_PATH, 'utf-8'));
       await Promise.each(cookies, async (cookie) => {
@@ -29,7 +37,8 @@ module.exports = async () => {
       });
     }
   } catch (err) {
-    console.error('Failed load cookies', err);
+    logger.info('Failed load cookies', err);
+    logger.info('Don\'t worry! No problem for continuous process');
   }
 
   page.emulate({
@@ -44,9 +53,18 @@ module.exports = async () => {
     },
   });
 
-  await page.goto(WEBSITE_URL, NAVIGATION_WAITING_OPTIONS);
+  try {
+    logger.debug('Open the website ...');
+    await page.goto(WEBSITE_URL, NAVIGATION_WAITING_OPTIONS);
+  } catch (err) {
+    logger.error('Failed open website', err);
+    await page.close();
+    await browser.close();
+    process.exit(1);
+  }
 
   try {
+    logger.debug('Try login ...');
     if (!(await page.$('.account'))) {
       await page.type('#loginId', process.env.AQ0URS_CLUB_ID);
       await page.type('#loginPass', process.env.AQ0URS_CLUB_PASS);
@@ -55,30 +73,35 @@ module.exports = async () => {
         page.evaluate(() => window.ajaxLogin()),
         page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
       ]);
+    } else {
+      logger.debug('Already logined');
     }
   } catch (err) {
-    console.error('Failed login', err);
+    logger.error('Failed login', err);
     await page.close();
     await browser.close();
     process.exit(1);
   }
 
   try {
+    logger.debug('Take screenshot ...');
     await page.screenshot({ fullPage: true, path: `${SCREENSHOTS_PATH}/${moment().format('YYYYMMDDHHmmss')}.png` });
   } catch (err) {
-    console.error('Failed take screenshot', err);
+    logger.error('Failed take screenshot', err);
   }
 
   try {
+    logger.debug('Moving "News" page ...');
     await Promise.all([
       (await page.$('.news')).click(),
       page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
     ]);
   } catch (err) {
-    console.error('Failed move news page', err);
+    logger.error('Failed move news page', err);
   }
 
   try {
+    logger.debug('Get news items and post to slack ...');
     const newsItemElements = await (await page.$('.items')).$$('.items-item');
     const newsItems = await Promise.map(newsItemElements, async (newsItem) => {
       const newsUrl = await newsItem.$('a') ? await newsItem.$eval('a', linkElement => linkElement.href) : null;
@@ -92,19 +115,21 @@ module.exports = async () => {
     });
     await SlackService.postMessage('新着情報の最新5件です', newsItems.slice(0, 5));
   } catch (err) {
-    console.error('Failed get news items', err);
+    logger.error('Failed get news items', err);
   }
 
   try {
+    logger.debug('Moving "Blog" page ...');
     await Promise.all([
       (await page.$('.blog')).click(),
       page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
     ]);
   } catch (err) {
-    console.error('Failed move news page', err);
+    logger.error('Failed move news page', err);
   }
 
   try {
+    logger.debug('Get blog entries and post to slack ...');
     const blogEntryElements = await (await page.$('.items')).$$('.items-item');
     const blogEntries = await Promise.map(blogEntryElements, async (blogEntry) => {
       const entryUrl = await blogEntry.$eval('h2 > a', linkElement => linkElement.href);
@@ -119,15 +144,18 @@ module.exports = async () => {
     });
     await SlackService.postMessage('ブログ記事の最新3件です', blogEntries.slice(0, 3));
   } catch (err) {
-    console.error('Failed get blog entries', err);
+    logger.error('Failed get blog entries', err);
   }
 
   try {
+    logger.debug('Save cookies ...');
     await fs.writeFileAsync(COOKIES_PATH, JSON.stringify(await page.cookies()));
   } catch (err) {
-    console.error('Failed save cookies', err);
+    logger.error('Failed save cookies', err);
   }
 
   await page.close();
   await browser.close();
+
+  logger.info('Finish task');
 };
