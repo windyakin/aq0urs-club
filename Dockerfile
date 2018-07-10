@@ -39,4 +39,4 @@ COPY --chown=pptruser:pptruser . .
 
 RUN mkdir -p cookie screenshot
 
-CMD ["npm", "start"]
+CMD ["npm", "run-script", "cron"]
