@@ -103,16 +103,13 @@ module.exports = async () => {
   try {
     logger.debug('Get news items and post to slack ...');
     const newsItemElements = await (await page.$('.items')).$$('.items-item');
-    const newsItems = await Promise.map(newsItemElements, async (newsItem) => {
-      const newsUrl = await newsItem.$('a') ? await newsItem.$eval('a', linkElement => linkElement.href) : null;
-      const newsDateText = (await (await (await newsItem.$('.info-date')).getProperty('innerText')).jsonValue()).trim();
-      const newsCategory = (await (await (await newsItem.$('.info-category')).getProperty('innerText')).jsonValue()).trim();
-      const newsCategoryColor = await newsItem.$eval('.info-category', categoryElement => window.getComputedStyle(categoryElement).backgroundColor);
-      const newsTitle = (await (await (await newsItem.$('.info-desc')).getProperty('innerText')).jsonValue()).trim();
-      return new News(
-        newsUrl, newsDateText, newsCategory, newsCategoryColor, newsTitle,
-      );
-    });
+    const newsItems = await Promise.map(newsItemElements, async newsItem => new News({
+      url: await newsItem.$('a') ? await newsItem.$eval('a', linkElement => linkElement.href) : null,
+      dateText: (await (await (await newsItem.$('.info-date')).getProperty('innerText')).jsonValue()).trim(),
+      category: (await (await (await newsItem.$('.info-category')).getProperty('innerText')).jsonValue()).trim(),
+      categoryColorText: await newsItem.$eval('.info-category', categoryElement => window.getComputedStyle(categoryElement).backgroundColor),
+      title: (await (await (await newsItem.$('.info-desc')).getProperty('innerText')).jsonValue()).trim(),
+    }));
     await SlackService.postMessage('新着情報の最新5件です', newsItems.slice(0, 5));
   } catch (err) {
     logger.error('Failed get news items', err);
@@ -131,17 +128,14 @@ module.exports = async () => {
   try {
     logger.debug('Get blog entries and post to slack ...');
     const blogEntryElements = await (await page.$('.items')).$$('.items-item');
-    const blogEntries = await Promise.map(blogEntryElements, async (blogEntry) => {
-      const entryUrl = await blogEntry.$eval('h2 > a', linkElement => linkElement.href);
-      const entryDateText = (await (await (await blogEntry.$('.info-date')).getProperty('innerText')).jsonValue()).trim();
-      const entryAuthor = (await (await (await blogEntry.$('.items-info-detail > a')).getProperty('innerText')).jsonValue()).trim();
-      const entryAuthorColor = await blogEntry.$eval('.items-info-detail > a', authorElement => window.getComputedStyle(authorElement).backgroundColor);
-      const entryTitle = (await (await (await blogEntry.$('h2')).getProperty('innerText')).jsonValue()).trim();
-      const entrySummary = (await (await (await blogEntry.$('.items-summary')).getProperty('innerText')).jsonValue()).trim();
-      return new Blog(
-        entryUrl, entryDateText, entryAuthor, entryAuthorColor, entryTitle, entrySummary,
-      );
-    });
+    const blogEntries = await Promise.map(blogEntryElements, async blogEntry => new Blog({
+      url: await blogEntry.$eval('h2 > a', linkElement => linkElement.href),
+      dateText: (await (await (await blogEntry.$('.info-date')).getProperty('innerText')).jsonValue()).trim(),
+      author: (await (await (await blogEntry.$('.items-info-detail > a')).getProperty('innerText')).jsonValue()).trim(),
+      authorColorText: await blogEntry.$eval('.items-info-detail > a', authorElement => window.getComputedStyle(authorElement).backgroundColor),
+      title: (await (await (await blogEntry.$('h2')).getProperty('innerText')).jsonValue()).trim(),
+      summary: (await (await (await blogEntry.$('.items-summary')).getProperty('innerText')).jsonValue()).trim(),
+    }));
     await SlackService.postMessage('ブログ記事の最新3件です', blogEntries.slice(0, 3));
   } catch (err) {
     logger.error('Failed get blog entries', err);

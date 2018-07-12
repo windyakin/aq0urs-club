@@ -3,15 +3,15 @@ const Color = require('color2');
 const moment = require('moment');
 
 module.exports = class ActiveItem {
-  constructor(url, dateText, colorText, title) {
+  constructor(args) {
     try {
-      this.url = new URL(url);
+      this.url = new URL(args.url);
     } catch (err) {
       this.url = null;
     }
-    this.date = moment(dateText, 'YYYY.MM.DD');
-    this.color = new Color(colorText);
-    this.title = title.trim();
+    this.date = moment(args.dateText, 'YYYY.MM.DD');
+    this.color = new Color(args.colorText);
+    this.title = args.title.trim();
   }
 
   get Url() { return this.url; }
@@ -20,11 +20,14 @@ module.exports = class ActiveItem {
 
   get Color() { return this.color; }
 
-  get Title() { return this.title; }
+  get Title() {
+    const newEmoji = this.isNewer() ? ':new_item:' : '';
+    return `${newEmoji} ${this.title}`.trim();
+  }
 
   isNewer(date) {
     const now = date || moment();
-    return now.subtract(1, 'days').startOf('date') <= this.Date();
+    return now.subtract(1, 'days').startOf('date') <= this.Date;
   }
 
   getSlackAttachment() {
