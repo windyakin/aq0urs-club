@@ -3,10 +3,15 @@ const striptags = require('striptags');
 const ActiveItem = require('./active-item');
 
 module.exports = class Entry extends ActiveItem {
-  constructor(url, dateText, author, authorColorText, title, summary) {
-    super(url, dateText, authorColorText, title);
-    this.author = author;
-    this.summary = summary;
+  constructor(args) {
+    super({
+      url: args.url,
+      dateText: args.dateText,
+      colorText: args.authorColorText,
+      title: args.title,
+    });
+    this.author = args.author;
+    this.summary = args.summary;
   }
 
   get Author() { return this.author; }

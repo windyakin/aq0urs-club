@@ -1,9 +1,14 @@
 const ActiveItem = require('./active-item');
 
 module.exports = class News extends ActiveItem {
-  constructor(url, dateText, category, categoryColorText, title) {
-    super(url, dateText, categoryColorText, title);
-    this.category = category;
+  constructor(args) {
+    super({
+      url: args.url,
+      dateText: args.dateText,
+      colorText: args.categoryColorText,
+      title: args.title,
+    });
+    this.category = args.category;
   }
 
   get Category() { return this.category; }
