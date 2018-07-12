@@ -20,11 +20,14 @@ module.exports = class ActiveItem {
 
   get Color() { return this.color; }
 
-  get Title() { return this.title; }
+  get Title() {
+    const newEmoji = this.isNewer() ? ':new_item:' : '';
+    return `${newEmoji} ${this.title}`.trim();
+  }
 
   isNewer(date) {
     const now = date || moment();
-    return now.subtract(1, 'days').startOf('date') <= this.Date();
+    return now.subtract(1, 'days').startOf('date') <= this.Date;
   }
 
   getSlackAttachment() {
