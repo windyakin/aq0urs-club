@@ -6,7 +6,7 @@ volumes:
 
 services:
   crawler:
-    image: aq0urs-club
+    image: windyakin/aq0urs-club
     build: .
     cap_add:
       - SYS_ADMIN
