@@ -15,7 +15,7 @@ RUN mkdir -p /tmp/noto \
   && unzip -d /tmp/noto/fonts /tmp/noto/noto.zip \
   && mkdir -p /usr/share/fonts/noto \
   && cp /tmp/noto/fonts/*.otf /usr/share/fonts/noto \
-  && chmod 644 -R /usr/share/fonts/noto/ \
+  && chmod 655 -R /usr/share/fonts/noto/ \
   && fc-cache -fv \
   && rm -rf /tmp/noto \
   && apt-get --force-yes remove -y --purge \
