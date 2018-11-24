@@ -110,7 +110,8 @@ module.exports = async () => {
       categoryColorText: await newsItem.$eval('.info-category', categoryElement => window.getComputedStyle(categoryElement).backgroundColor),
       title: (await (await (await newsItem.$('.info-desc')).getProperty('innerText')).jsonValue()).trim(),
     }));
-    await SlackService.postMessage('新着情報の最新5件です', newsItems.slice(0, 5));
+    const reportNewsItems = newsItems.filter((item, index) => item.isNewer() || index < 5);
+    await SlackService.postMessage(`新着情報の最新${reportNewsItems.length}件です`, reportNewsItems);
   } catch (err) {
     logger.error('Failed get news items', err);
   }
@@ -136,7 +137,8 @@ module.exports = async () => {
       title: (await (await (await blogEntry.$('h2')).getProperty('innerText')).jsonValue()).trim(),
       summary: (await (await (await blogEntry.$('.items-summary')).getProperty('innerText')).jsonValue()).trim(),
     }));
-    await SlackService.postMessage('ブログ記事の最新3件です', blogEntries.slice(0, 3));
+    const reportBlogEntries = blogEntries.filter((entry, index) => entry.isNewer() || index < 3);
+    await SlackService.postMessage(`ブログ記事の最新${reportBlogEntries.length}件です`, reportBlogEntries);
   } catch (err) {
     logger.error('Failed get blog entries', err);
   }
