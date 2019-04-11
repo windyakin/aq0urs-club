@@ -1,5 +1,4 @@
-FROM node:8-slim
-
+FROM node:10-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Japanese Font
