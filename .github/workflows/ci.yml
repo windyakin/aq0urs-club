@@ -1,0 +1,13 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build the Docker Image
+        run: docker build --pull --no-cache . -f Dockerfile
