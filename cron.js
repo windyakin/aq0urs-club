@@ -7,5 +7,12 @@ const app = require('./app');
 new Cron.CronJob({
   cronTime: process.env.CRONRANGE,
   start: true,
-  onTick: app,
+  onTick: async () => {
+    try {
+      await app();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
+  },
 }).start();

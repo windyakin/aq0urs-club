@@ -6,7 +6,7 @@ const moment = require('moment');
 const log4js = require('log4js');
 
 const News = require('./module/news');
-const Blog = require('./module/blog');
+const Talk = require('./module/talk');
 const SlackService = require('./module/slack-service');
 
 const WEBSITE_URL = Buffer.from('aHR0cHM6Ly9sb3ZlbGl2ZS1hcW91cnNjbHViLmpwLw==', 'base64').toString();
@@ -129,13 +129,10 @@ module.exports = async () => {
   try {
     logger.debug('Get blog entries and post to slack ...');
     const blogEntryElements = await (await page.$('.items')).$$('.items-item');
-    const blogEntries = await Promise.map(blogEntryElements, async blogEntry => new Blog({
-      url: await blogEntry.$eval('h2 > a', linkElement => linkElement.href),
-      dateText: (await (await (await blogEntry.$('.info-date')).getProperty('innerText')).jsonValue()).trim(),
-      author: (await (await (await blogEntry.$('.items-info-detail > a')).getProperty('innerText')).jsonValue()).trim(),
-      authorColorText: await blogEntry.$eval('.items-info-detail > a', authorElement => window.getComputedStyle(authorElement).backgroundColor),
+    const blogEntries = await Promise.map(blogEntryElements, async blogEntry => new Talk({
+      dateText: (await (await (await blogEntry.$('.item-date')).getProperty('innerText')).jsonValue()).trim(),
       title: (await (await (await blogEntry.$('h2')).getProperty('innerText')).jsonValue()).trim(),
-      summary: (await (await (await blogEntry.$('.items-summary')).getProperty('innerText')).jsonValue()).trim(),
+      backgroundImage: await blogEntry.$eval('figure > a', linkElement => window.getComputedStyle(linkElement).backgroundImage),
     }));
     const reportBlogEntries = blogEntries.filter((entry, index) => entry.isNewer() || index < 3);
     await SlackService.postMessage(`ブログ記事の最新${reportBlogEntries.length}件です`, reportBlogEntries);
