@@ -10,4 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build the Docker Image
-        run: docker build --pull --no-cache . -f Dockerfile
+        uses: actions/docker/cli@master
+        with:
+          args: build --pull --no-cache . -f Dockerfile
