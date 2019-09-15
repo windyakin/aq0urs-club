@@ -11,10 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build the Docker Image
-        run: docker build --pull --no-cache . -f Dockerfile --tag windyakin/aq0urs-club:latest
+        uses: actions/docker/cli@master
+        with:
+          args: build --pull --no-cache . -f Dockerfile --tag windyakin/aq0urs-club:latest
       - uses: actions/docker/login@master
-        secrets:
-          - DOCKER_USERNAME
-          - DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Publish to Docker Hub
-        run: docker push windyakin/aq0urs-club:latest
+        uses: actions/docker/cli@master
+        with:
+          args: push windyakin/aq0urs-club:latest
