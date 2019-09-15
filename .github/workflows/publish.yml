@@ -1,0 +1,20 @@
+name: Publish to Docker Hub
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build the Docker Image
+        run: docker build --pull --no-cache . -f Dockerfile --tag windyakin/aq0urs-club:latest
+      - uses: actions/docker/login@master
+        secrets:
+          - DOCKER_USERNAME
+          - DOCKER_PASSWORD
+      - name: Publish to Docker Hub
+        run: docker push windyakin/aq0urs-club:latest
