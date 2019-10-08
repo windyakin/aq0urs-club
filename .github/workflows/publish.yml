@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+
       - name: Build the Docker Image
-        uses: actions/docker/cli@master
-        with:
-          args: build --pull --no-cache . -f Dockerfile --tag windyakin/aq0urs-club:latest
-      - uses: actions/docker/login@master
+        run: docker build --pull --no-cache . -f Dockerfile --tag windyakin/aq0urs-club:latest
+
+      - uses: Login to the Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
+
       - name: Publish to Docker Hub
-        uses: actions/docker/cli@master
-        with:
-          args: push windyakin/aq0urs-club:latest
+        run: docker push windyakin/aq0urs-club:latest
