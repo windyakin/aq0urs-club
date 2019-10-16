@@ -16,7 +16,7 @@
     "eslint-plugin-import": "^2.18.2"
   },
   "dependencies": {
-    "bluebird": "^3.7.0",
+    "bluebird": "^3.7.1",
     "color2": "^1.0.8",
     "cron": "^1.7.2",
     "dotenv": "^8.2.0",
