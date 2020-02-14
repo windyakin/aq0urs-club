@@ -18,6 +18,8 @@ RUN mkdir -p /tmp/noto \
   && fc-cache -fv \
   && rm -rf /tmp/noto \
   && apt-get --force-yes remove -y --purge \
+    wget \
+    udev \
     unzip \
     fontconfig \
   && apt-get autoremove -y \
@@ -28,13 +30,19 @@ RUN apt-get update \
   && apt-get install -y libgconf-2-4 \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    wget \
+    gnupg \
+  && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
     google-chrome-unstable \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-  && apt-get purge --auto-remove -y curl \
+  && apt-get purge --auto-remove -y \
+    wget \
+    gnupg \
   && rm -rf /src/*.deb
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
