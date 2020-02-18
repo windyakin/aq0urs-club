@@ -16,9 +16,9 @@ jobs:
 
       - name: Login to the Docker Hub
         env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_USERNAME: windyakin
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
+        run: docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
       - name: Publish to Docker Hub
         run: docker push windyakin/aq0urs-club:latest
