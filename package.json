@@ -23,7 +23,7 @@
     "log4js": "^5.2.2",
     "moment": "^2.24.0",
     "puppeteer": "^1.20.0",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "striptags": "^3.1.1"
   }
