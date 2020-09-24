@@ -38,11 +38,10 @@ RUN apt-get update \
   && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
-    google-chrome-unstable \
+    google-chrome-stable \
+    libxss1 \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
-  && apt-get purge --auto-remove -y \
-    wget \
-    gnupg \
+  && apt-get autoremove -y \
   && rm -rf /src/*.deb
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
@@ -53,7 +52,7 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
   && mkdir -p /usr/src/app \
   && chown -R pptruser:pptruser /usr/src/app
 
-ENV CHROME_EXECUTE_PATH=google-chrome-unstable
+ENV CHROME_EXECUTE_PATH=google-chrome-stable
 
 USER pptruser
 
