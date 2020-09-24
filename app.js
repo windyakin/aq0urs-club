@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
-const moment = require('moment');
+const dayjs = require('dayjs');
 
 const log4js = require('log4js');
 
@@ -85,7 +85,7 @@ module.exports = async () => {
 
   try {
     logger.debug('Take screenshot ...');
-    await page.screenshot({ fullPage: true, path: `${SCREENSHOTS_PATH}/${moment().format('YYYYMMDDHHmmss')}.png` });
+    await page.screenshot({ fullPage: true, path: `${SCREENSHOTS_PATH}/${dayjs().format('YYYYMMDDHHmmss')}.png` });
   } catch (err) {
     logger.error('Failed take screenshot', err);
   }

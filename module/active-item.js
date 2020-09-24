@@ -1,6 +1,8 @@
 const { URL } = require('url');
 const Color = require('color2');
-const moment = require('moment');
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat')
+dayjs.extend(customParseFormat)
 
 module.exports = class ActiveItem {
   constructor(args) {
@@ -9,7 +11,7 @@ module.exports = class ActiveItem {
     } catch (err) {
       this.url = null;
     }
-    this.date = moment(args.dateText, 'YYYY.MM.DD');
+    this.date = dayjs(args.dateText, 'YYYY.MM.DD');
     this.color = new Color(args.colorText);
     this.title = args.title.trim();
   }
@@ -26,7 +28,7 @@ module.exports = class ActiveItem {
   }
 
   isNewer(date) {
-    const now = date || moment();
+    const now = date || dayjs();
     return now.subtract(1, 'days').startOf('date') <= this.Date;
   }
 
