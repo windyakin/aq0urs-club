@@ -60,7 +60,7 @@ module.exports = async () => {
     logger.error('Failed open website', err);
     await page.close();
     await browser.close();
-    process.exit(1);
+    throw new Error('Failed open website');
   }
 
   try {
@@ -80,7 +80,7 @@ module.exports = async () => {
     logger.error('Failed login', err);
     await page.close();
     await browser.close();
-    process.exit(1);
+    throw new Error('Failed login');
   }
 
   try {
