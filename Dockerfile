@@ -1,4 +1,4 @@
-FROM node:10-slim
+FROM node:14-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Japanese Font
@@ -23,11 +23,6 @@ RUN mkdir -p /tmp/noto \
     unzip \
     fontconfig \
   && apt-get autoremove -y \
-  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-
-# NOTE: See https://crbug.com/795759
-RUN apt-get update \
-  && apt-get install -y libgconf-2-4 \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 RUN apt-get update \
