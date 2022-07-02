@@ -117,17 +117,17 @@ module.exports = async () => {
   }
 
   try {
-    logger.debug('Moving "Blog" page ...');
+    logger.debug('Moving "Radio" page ...');
     await Promise.all([
-      (await page.$('.blog')).click(),
+      (await page.$('.radio')).click(),
       page.waitForNavigation(NAVIGATION_WAITING_OPTIONS),
     ]);
   } catch (err) {
-    logger.error('Failed move news page', err);
+    logger.error('Failed move radio page', err);
   }
 
   try {
-    logger.debug('Get blog entries and post to slack ...');
+    logger.debug('Get radio entries and post to slack ...');
     const blogEntryElements = await (await page.$('.items')).$$('.items-item');
     const blogEntries = await Promise.map(blogEntryElements, async blogEntry => new Talk({
       dateText: (await (await (await blogEntry.$('.item-date')).getProperty('innerText')).jsonValue()).trim(),
@@ -135,9 +135,9 @@ module.exports = async () => {
       backgroundImage: await blogEntry.$eval('figure > a', linkElement => window.getComputedStyle(linkElement).backgroundImage),
     }));
     const reportBlogEntries = blogEntries.filter((entry, index) => entry.isNewer() || index < 3);
-    await SlackService.postMessage(`ブログ記事の最新${reportBlogEntries.length}件です`, reportBlogEntries);
+    await SlackService.postMessage(`ラジオの最新${reportBlogEntries.length}件です`, reportBlogEntries);
   } catch (err) {
-    logger.error('Failed get blog entries', err);
+    logger.error('Failed get radio entries', err);
   }
 
   try {
