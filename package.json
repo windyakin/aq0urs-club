@@ -20,15 +20,15 @@
     "eslint-plugin-node": "11.1.0"
   },
   "dependencies": {
-    "bluebird": "^3.7.2",
-    "color2": "^1.0.8",
-    "cron": "^2.0.0",
-    "dayjs": "^1.11.3",
-    "dotenv": "^16.0.1",
-    "log4js": "^6.5.2",
-    "puppeteer": "^16.0.0",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
-    "striptags": "^3.2.0"
+    "bluebird": "3.7.2",
+    "color2": "1.0.8",
+    "cron": "2.0.0",
+    "dayjs": "1.11.3",
+    "dotenv": "16.0.1",
+    "log4js": "6.5.2",
+    "puppeteer": "16.0.0",
+    "request": "2.88.2",
+    "request-promise": "4.2.6",
+    "striptags": "3.2.0"
   }
 }
