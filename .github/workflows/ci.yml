@@ -16,7 +16,7 @@ jobs:
           - linux/arm64
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: docker/setup-qemu-action@v2
 
@@ -37,7 +37,7 @@ jobs:
           - 18.x
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
